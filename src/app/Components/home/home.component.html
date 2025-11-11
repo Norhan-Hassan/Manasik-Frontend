@@ -1,0 +1,321 @@
+<!-- Navbar -->
+
+<!-- Hero Section -->
+<div class="relative min-h-[600px] lg:min-h-[700px] flex items-center overflow-hidden">
+  <!-- Background Image -->
+  <div class="absolute inset-0">
+    <img
+      src="https://images.unsplash.com/photo-1571909552531-1601eaec8f79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrYWFiYSUyMG1lY2NhJTIwaG9seXxlbnwxfHx8fDE3NjIwMDAzMzd8MA&ixlib=rb-4.1.0&q=80&w=1080 "
+      alt="Kaaba in Makkah"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
+    <div class="max-w-3xl">
+      <h1 class="text-white mb-6 animate-fade-in">
+        Your Journey to the Holy Land Begins Here
+      </h1>
+      <p class="text-white/90 text-xl mb-8">
+        Book Umrah packages, hotels, and transport - all in one place
+      </p>
+
+      <!-- Trust Indicators -->
+      <div class="flex flex-wrap gap-6 mb-8">
+        <div class="flex items-center gap-2 text-white">
+          <lucide-icon name="users" class="h-5 w-5 text-[var(--primary)]"></lucide-icon>
+          <span>10,000+ Happy Pilgrims</span>
+        </div>
+        <div class="flex items-center gap-2 text-white">
+          <lucide-icon name="building-2" class="h-5 w-5 text-[var(--primary)]"></lucide-icon>
+          <span>500+ Partner Hotels</span>
+        </div>
+        <div class="flex items-center gap-2 text-white">
+          <lucide-icon name="headphones" class="h-5 w-5 text-[var(--primary)]"></lucide-icon>
+          <span>24/7 Support</span>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="bg-white rounded-xl p-2 shadow-2xl flex flex-col sm:flex-row gap-2">
+        <div class="flex-1 relative">
+          <lucide-icon name="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"></lucide-icon>
+          <input
+            type="text"
+            placeholder="Search hotels, transport, or packages"
+            class="pl-10 border-0 focus-visible:ring-0 bg-transparent h-12 w-full outline-none"
+          />
+        </div>
+        <button
+          class="bg-[var(--primary)] text-white hover:opacity-90 h-12 px-8 rounded-[var(--radius-button)]">
+          Start Planning
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions Section -->
+<section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    @for (action of actions; track action.title) {
+      <div
+        class="p-8 border border-[var(--border)] bg-[var(--background)] hover:shadow-[var(--shadow-heavy)] transition-all duration-300 hover:-translate-y-2 cursor-pointer group"
+        style="border-radius: var(--radius-card)">
+        <div
+          class="w-16 h-16 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+          [style.background-color]="action.color">
+          <lucide-icon [name]="action.icon" class="h-8 w-8 text-[var(--primary)]"></lucide-icon>
+        </div>
+        <h4 class="text-[var(--text-primary)] mb-2">{{ action.title }}</h4>
+        <p class="text-[var(--text-secondary)]">{{ action.description }}</p>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Featured Packages Section -->
+<section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-[var(--surface)]">
+  <div class="text-center mb-12">
+    <h2 class="text-[var(--text-primary)] mb-4">Trending Umrah Packages</h2>
+    <p class="text-[var(--text-secondary)] text-lg">
+      Choose from our carefully curated packages designed for every budget
+    </p>
+  </div>
+
+  <!-- Category Filters -->
+  <div class="flex flex-wrap justify-center gap-3 mb-12">
+    @for (cat of categories; track cat) {
+      <button
+        (click)="setCategory(cat)"
+        class="px-4 py-2 rounded-full text-sm font-medium transition-all"
+        [ngClass]="{
+          'bg-[var(--primary)] text-white': selectedCategory() === cat,
+          'border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface)]': selectedCategory() !== cat
+        }"
+        style="border-radius: var(--radius-pill)">
+        {{ cat }}
+      </button>
+    }
+  </div>
+
+  <!-- Packages Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    @for (pkg of filteredPackages(); track pkg.id) {
+      <div
+        class="overflow-hidden border border-[var(--border)] bg-[var(--background)] hover:shadow-[var(--shadow-heavy)] transition-all duration-300 group"
+        style="border-radius: var(--radius-card)">
+        <div class="relative h-48 overflow-hidden">
+          <img
+            [src]="pkg.image"
+            [alt]="pkg.title"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+          />
+          <div class="absolute top-3 right-3 bg-[var(--primary)] text-white px-2 py-1 rounded text-xs border-0">
+            {{ pkg.category }}
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center gap-1 mb-2">
+            <lucide-icon name="star" class="h-4 w-4 fill-[var(--warning)] text-[var(--warning)]"></lucide-icon>
+            <span class="text-[var(--text-primary)]">{{ pkg.rating }}</span>
+            <span class="text-[var(--text-secondary)]">({{ pkg.reviews }})</span>
+          </div>
+          <h4 class="text-[var(--text-primary)] mb-2">{{ pkg.title }}</h4>
+          <div class="flex items-center gap-4 mb-3 text-[var(--text-secondary)]">
+            <div class="flex items-center gap-1">
+              <lucide-icon name="clock" class="h-4 w-4"></lucide-icon>
+              <span>{{ pkg.duration }}</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <lucide-icon name="map-pin" class="h-4 w-4"></lucide-icon>
+              <span>Makkah</span>
+            </div>
+          </div>
+          <div class="space-y-1 mb-4">
+            @for (item of pkg.included.slice(0, 3); track item) {
+              <div class="flex items-center gap-2 text-[var(--text-secondary)]">
+                <lucide-icon name="check" class="h-3 w-3 text-[var(--success)]"></lucide-icon>
+                <span>{{ item }}</span>
+              </div>
+            }
+          </div>
+          <div class="flex items-end justify-between">
+            <div>
+              <span class="text-[var(--text-secondary)]">From</span>
+              <div class="text-[var(--text-primary)]">
+                <span class="text-2xl">${{ pkg.price }}</span>
+                <span class="text-[var(--text-secondary)]">/person</span>
+              </div>
+            </div>
+            <button class="bg-[var(--primary)] text-white hover:opacity-90 px-4 py-2 rounded text-sm">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="text-center">
+    <button class="border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white px-6 py-2 rounded"
+            style="border-radius: var(--radius-button)">
+      View All Packages
+    </button>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <div class="text-center mb-16">
+    <h2 class="text-[var(--text-primary)] mb-4">How It Works</h2>
+    <p class="text-[var(--text-secondary)] text-lg">
+      Book your spiritual journey in 4 simple steps
+    </p>
+  </div>
+
+  <div class="relative">
+    <!-- Connecting Line - Desktop -->
+    <div class="hidden lg:block absolute top-20 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-[var(--primary)] via-[var(--primary)] to-[var(--primary)] opacity-20"></div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      @for (step of steps; track step.step) {
+        <div class="relative text-center group">
+          <!-- Step Number Circle -->
+          <div class="relative inline-flex mb-6">
+            <div class="w-20 h-20 rounded-full bg-[var(--primary)] flex items-center justify-center text-white relative z-10 group-hover:scale-110 transition-transform">
+              <lucide-icon [name]="step.icon" class="h-10 w-10"></lucide-icon>
+            </div>
+            <div class="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-[var(--success)] flex items-center justify-center text-white z-20">
+              <span>{{ step.step }}</span>
+            </div>
+          </div>
+
+          <h4 class="text-[var(--text-primary)] mb-3">{{ step.title }}</h4>
+          <p class="text-[var(--text-secondary)]">{{ step.description }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="bg-[var(--primary)] py-16">
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      @for (stat of stats; track stat.label) {
+        <div class="text-center">
+          <div class="flex justify-center mb-4">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center bg-white/10">
+              <lucide-icon [name]="stat.icon" class="h-8 w-8 text-white"></lucide-icon>
+            </div>
+          </div>
+          <div class="text-4xl text-white mb-2">
+<!--             <app-animated-counter [target]="stat.value" [suffix]="stat.suffix"></app-animated-counter>
+ -->          </div>
+          <div class="text-white/80">{{ stat.label }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-[var(--surface)]">
+  <div class="text-center mb-12">
+    <h2 class="text-[var(--text-primary)] mb-4">What Our Pilgrims Say</h2>
+    <p class="text-[var(--text-secondary)] text-lg">
+      Real experiences from verified travelers
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    @for (testimonial of testimonials; track testimonial.id) {
+      <div class="p-6 border border-[var(--border)] bg-[var(--background)] hover:shadow-[var(--shadow-heavy)] transition-all duration-300"
+           style="border-radius: var(--radius-card)">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-full overflow-hidden bg-[var(--surface)] flex items-center justify-center">
+            <img [src]="testimonial.avatar" [alt]="testimonial.name" class="w-full h-full object-cover">
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <h4 class="text-[var(--text-primary)]">{{ testimonial.name }}</h4>
+              @if (testimonial.verified) {
+                <div class="bg-[var(--success)]/10 text-[var(--success)] border-0 flex items-center gap-1 px-2 py-0.5 rounded text-xs">
+                  <lucide-icon name="check-circle" class="h-3 w-3"></lucide-icon>
+                  <span>Verified</span>
+                </div>
+              }
+            </div>
+            <div class="flex gap-0.5 mt-1">
+              @for (star of [].constructor(testimonial.rating); track $index) {
+                <lucide-icon name="star" class="h-4 w-4 fill-[var(--warning)] text-[var(--warning)]"></lucide-icon>
+              }
+            </div>
+          </div>
+        </div>
+        <p class="text-[var(--text-secondary)] italic">"{{ testimonial.text }}"</p>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  <div class="bg-gradient-to-r from-[var(--primary)] to-[#0a5c2d] rounded-2xl p-8 md:p-12 text-center">
+    <div class="max-w-2xl mx-auto">
+      <lucide-icon name="mail" class="h-12 w-12 text-white mx-auto mb-4"></lucide-icon>
+      <h3 class="text-white mb-4">Get Exclusive Umrah Travel Tips & Deals</h3>
+      <p class="text-white/90 mb-8">
+        Subscribe to our newsletter and be the first to know about special offers, travel guides, and updates.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-4">
+        <input
+          type="email"
+          placeholder="Enter your email address"
+          class="bg-white border-0 h-12 flex-1 px-4 rounded outline-none"
+        />
+        <button class="bg-[var(--background)] text-[var(--primary)] hover:bg-white h-12 px-8 rounded">
+          Subscribe
+        </button>
+      </div>
+
+      <div class="flex items-center justify-center gap-2 text-white/80">
+        <lucide-icon name="shield" class="h-4 w-4"></lucide-icon>
+        <span>Your privacy is protected. Unsubscribe anytime.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-[var(--surface)]">
+  <div class="text-center mb-12">
+    <h2 class="text-[var(--text-primary)] mb-4">Frequently Asked Questions</h2>
+    <p class="text-[var(--text-secondary)] text-lg">
+      Find answers to common questions about booking your Umrah journey
+    </p>
+  </div>
+
+  <div class="max-w-3xl mx-auto space-y-4">
+    @for (faq of faqs; track faq.question) {
+      <div class="border border-[var(--border)] bg-[var(--background)] rounded-lg overflow-hidden">
+        <button
+          class="w-full px-6 py-4 text-left flex justify-between items-center text-[var(--text-primary)] hover:text-[var(--primary)]"
+          (click)="toggleFAQ(faq.question)">
+          <span>{{ faq.question }}</span>
+          <lucide-icon name="chevron-down" class="h-5 w-5 transition-transform" 
+                   [ngClass]="{'rotate-180': openFAQ() === faq.question}"></lucide-icon>
+        </button>
+        @if (openFAQ() === faq.question) {
+          <div class="px-6 pb-4 text-[var(--text-secondary)]">
+            {{ faq.answer }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

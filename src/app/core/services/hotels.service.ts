@@ -8,6 +8,16 @@ import { Hotel, HotelSearchParams, Room } from '../../interfaces';
   providedIn: 'root',
 })
 export class HotelsService {
+  /**
+   * HotelsService
+   * - Responsible for interacting with backend hotel endpoints used across the app.
+   * - getHotels: fetches a filtered list (city, filter) and is used by HotelComponent.
+   * - getHotelById: fetches a single hotel (used by HotelDetailsComponent).
+   * - getImageUrl: helper that resolves image URLs (absolute or via configured image base URL).
+   *
+   * Note: The service does not perform UI concerns such as showing a loading spinner; callers
+   * (components) should set `loading` flags around calls so the UI can react consistently.
+   */
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
   private readonly apiUrlForImages = environment.apiUrlForImages;

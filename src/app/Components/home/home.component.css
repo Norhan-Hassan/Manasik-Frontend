@@ -1,0 +1,11 @@
+/* Home component styles (FAQ chevron animation hook)
+	 - We keep this file minimal: the chevron rotates with a smooth ease.
+*/
+.faq-toggle-icon lucide-icon {
+	transition: transform 280ms cubic-bezier(.2,.9,.2,1);
+	transform-origin: center;
+}
+
+.faq-toggle-icon lucide-icon.rotate-180 {
+	transform: rotate(180deg);
+}

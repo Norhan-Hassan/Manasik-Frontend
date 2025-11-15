@@ -2,6 +2,12 @@
 
 @layer base {
   :root {
+      /*
+        Theme variables used across the app. Use these variables in components to
+        keep a single source of truth for color, spacing and radii. We also use
+        the `--primary-rgb` value for semi-transparent variants (e.g. overlays).
+        Components should reference these like: color: var(--primary)
+      */
     /* Light Mode - Manisik Design System */
     --primary: #0e7c3b;
     --primary-rgb: 14, 124, 59;
@@ -155,4 +161,9 @@
 
 .animate-fade-in {
   animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Ensure clickable controls show pointer cursor for better affordance */
+button, a, .btn-primary, .btn-outline, .nav-icon-btn {
+  cursor: pointer;
 }

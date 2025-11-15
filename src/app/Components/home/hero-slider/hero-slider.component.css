@@ -1,0 +1,23 @@
+/* HeroSliderComponent styles
+   - Uses CSS variables for colors to match the global theme
+   - The component is responsive; images use object-cover to preserve aspect
+*/
+:host {
+  display: block;
+}
+
+button:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Slide transitions: content fades up when slide becomes active */
+.slide-content {
+  transition: transform 700ms ease, opacity 700ms ease;
+}
+
+/* Make sure lucide icons used inside the slider have a small margin for visual spacing */
+.slide-content lucide-icon {
+  margin-right: 0.25rem;
+}
+

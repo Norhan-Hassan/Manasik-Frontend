@@ -1,0 +1,30 @@
+/* AI Chat widget styles - fixed at bottom-right of the page
+   - Colors are derived from global CSS variables for theme consistency
+*/
+.ai-chat-widget {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  /* Increased width so labels like "New Chat" fit on one line comfortably */
+  width: 380px;
+  max-height: 520px;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+  border-radius: 12px;
+  box-shadow: var(--shadow-heavy);
+  overflow: hidden;
+  z-index: 60;
+}
+
+.ai-chat-header {
+  background: linear-gradient(90deg, rgba(var(--primary-rgb),0.08), rgba(var(--primary-rgb),0.04));
+}
+
+.ai-chat-messages {
+  height: 340px;
+}
+
+.ai-chat-input input {
+  border: 1px solid var(--border);
+}

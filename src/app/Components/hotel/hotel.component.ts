@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HotelsService } from 'src/app/core/services/hotels.service';
+import { I18nService } from 'src/app/core/services/i18n.service';
 import { Hotel, HotelSearchParams } from 'src/app/interfaces/hotel.interface';
 import { LucideAngularModule } from 'lucide-angular';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-hotel',
   imports: [FormsModule, CommonModule, LucideAngularModule],
@@ -11,6 +13,8 @@ import { LucideAngularModule } from 'lucide-angular';
   styleUrl: './hotel.component.css',
 })
 export class HotelComponent implements OnInit {
+  // expose I18nService to template so we can call i18n.translate(...) inside hotel templates
+  readonly i18n = inject(I18nService);
   viewMode: 'grid' | 'list' = 'grid';
   searchText: string = '';
   city: string = 'Makkah';
@@ -18,6 +22,8 @@ export class HotelComponent implements OnInit {
   loading = false;
 
   hotels: Hotel[] = [];
+  // Inject HotelsService to fetch data and Router to navigate to details page
+  private readonly router = inject(Router);
   constructor(private hotelService: HotelsService) {}
 
   ngOnInit(): void {
@@ -83,5 +89,14 @@ export class HotelComponent implements OnInit {
   }
   onFilterChange() {
     this.loadHotels();
+  }
+
+  /**
+   * Navigate to the Hotel Details page.
+   * We only navigate; the HotelDetailsComponent will fetch the hotel by ID
+   * using HotelsService (keeps data fetching single-responsibility).
+   */
+  viewDetails(hotelId: string | number) {
+    this.router.navigate(['/hotels', hotelId]).catch((err) => console.error('Navigation error:', err));
   }
 }

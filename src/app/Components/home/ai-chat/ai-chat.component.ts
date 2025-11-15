@@ -1,0 +1,121 @@
+import { Component, ElementRef, OnInit, ViewChild, signal, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { LucideAngularModule } from 'lucide-angular';
+import { AIChatService } from 'src/app/core/services/ai-chat.service';
+import { I18nService } from 'src/app/core/services/i18n.service';
+
+/**
+ * AIChatComponent
+ * - Small chat widget that appears fixed at the bottom-right of the Home page.
+ * - Messages from user include their name; AI messages are labeled "Assistant".
+ * - Uses AIChatService to send user messages and receive AI responses.
+ * - Conversation is kept locally; a real app could persist conversationId.
+ */
+@Component({
+  selector: 'app-ai-chat',
+  standalone: true,
+  imports: [CommonModule, FormsModule, LucideAngularModule],
+  templateUrl: './ai-chat.component.html',
+  styleUrls: ['./ai-chat.component.css'],
+})
+export class AIChatComponent implements OnInit {
+  @ViewChild('messagesList', { static: false }) messagesList!: ElementRef<HTMLElement>;
+
+  // Controls whether the chat panel is open. Start closed so only the AI icon appears.
+  open = signal<boolean>(false);
+
+  // Simple message model
+  messages = signal<Array<{ from: 'user' | 'assistant'; name?: string; text: string }>>([]);
+
+  input = signal<string>('');
+  loading = signal<boolean>(false);
+
+  private conversationId: string | null = null;
+
+  // expose i18n so template strings can be localized
+  readonly i18n = inject(I18nService);
+
+  constructor(private ai: AIChatService) {}
+
+  ngOnInit(): void {
+    // Seed a welcome message from Assistant (kept even when closed)
+    this.messages.update((m) => [
+      ...m,
+      { from: 'assistant', name: this.i18n.translate('chat.assistant'), text: this.i18n.translate('chat.welcome') },
+    ]);
+    this.scrollToBottom();
+  }
+
+  /**
+   * Start a new conversation (clear messages and reset conversationId)
+   */
+  newChat() {
+    this.messages.set([]);
+    this.conversationId = null;
+    // re-add initial assistant message
+    this.messages.update((m) => [
+      ...m,
+      { from: 'assistant', name: this.i18n.translate('chat.assistant'), text: this.i18n.translate('chat.newStarted') },
+    ]);
+    this.scrollToBottom();
+  }
+
+  // Open the chat panel (show full UI)
+  openChat() {
+    this.open.set(true);
+    this.scrollToBottom();
+  }
+
+  // Close the chat panel (only the floating icon remains)
+  closeChat() {
+    this.open.set(false);
+  }
+
+  /**
+   * Send user's message to backend and append assistant reply when available
+   */
+  send() {
+    const text = this.input().trim();
+    if (!text) return;
+
+    // Append user message locally immediately for responsiveness
+    this.messages.update((m) => [...m, { from: 'user', name: 'You', text }]);
+    this.input.set('');
+    this.loading.set(true);
+    this.scrollToBottom();
+
+    // Call AI service
+    this.ai.sendMessage(this.conversationId, text).subscribe({
+      next: (res) => {
+        // Expecting { conversationId, reply }
+        if (res?.conversationId) this.conversationId = res.conversationId;
+        const reply = res?.reply ?? 'Sorry, I could not generate a response.';
+        this.messages.update((m) => [...m, { from: 'assistant', name: 'Assistant', text: reply }]);
+        this.loading.set(false);
+        this.scrollToBottom();
+      },
+      error: (err) => {
+        console.error('AI chat error', err);
+        this.messages.update((m) => [
+          ...m,
+          { from: 'assistant', name: 'Assistant', text: 'An error occurred. Please try again later.' },
+        ]);
+        this.loading.set(false);
+        this.scrollToBottom();
+      },
+    });
+  }
+
+  // Scroll messages container to bottom when new messages appear
+  private scrollToBottom() {
+    setTimeout(() => {
+      try {
+        const el = this.messagesList?.nativeElement;
+        if (el) el.scrollTop = el.scrollHeight;
+      } catch (e) {
+        // ignore
+      }
+    }, 50);
+  }
+}

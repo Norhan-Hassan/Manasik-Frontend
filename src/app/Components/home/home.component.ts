@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   OnInit,
+  OnDestroy,
   signal,
   computed,
 } from '@angular/core';
@@ -10,6 +11,10 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
+// New standalone components to keep HomeComponent lightweight and composable
+import { HeroSliderComponent } from './hero-slider/hero-slider.component';
+import { AIChatComponent } from './ai-chat/ai-chat.component';
+import { I18nService } from 'src/app/core/services/i18n.service';
 
 // Interfaces
 export interface QuickAction {
@@ -18,6 +23,8 @@ export interface QuickAction {
   description: string;
   color: string;
   route?: string;
+  titleKey?: string;
+  descriptionKey?: string;
 }
 
 export interface Package {
@@ -37,6 +44,8 @@ export interface Step {
   step: string;
   title: string;
   description: string;
+  titleKey?: string;
+  descriptionKey?: string;
 }
 
 export interface Statistic {
@@ -51,25 +60,37 @@ export interface Testimonial {
   name: string;
   avatar: string;
   rating: number;
-  text: string;
+  // Use translation keys for testimonial text so content can be localized.
+  textKey?: string;
+  text?: string; // fallback if no key provided (e.g., from backend)
   verified: boolean;
 }
 
 export interface FAQ {
-  question: string;
-  answer: string;
+  // Optionally store translation keys to support i18n. If keys are absent,
+  // `question`/`answer` will be used as provided (useful for backend-driven content).
+  question?: string;
+  answer?: string;
+  questionKey?: string;
+  answerKey?: string;
 }
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideAngularModule, FormsModule],
+  // Import HeroSliderComponent and AIChatComponent so the home page can use them
+  imports: [CommonModule, RouterModule, LucideAngularModule, FormsModule, HeroSliderComponent, AIChatComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+  
   private readonly router = inject(Router);
+  // expose i18n service to the template so static text can flip languages
+  readonly i18n = inject(I18nService);
+
+  // Hero slider has been moved to a dedicated standalone component: HeroSliderComponent
 
   // State management
   readonly animateIn = signal<boolean>(false);
@@ -78,7 +99,7 @@ export class HomeComponent implements OnInit {
   readonly newsletterEmail = signal<string>('');
   readonly isSubmittingNewsletter = signal<boolean>(false);
 
-  // Quick Actions Data
+  // Quick Actions Data (use i18n keys for title/description so these can translate)
   readonly actions: QuickAction[] = [
     {
       icon: 'package',
@@ -86,6 +107,12 @@ export class HomeComponent implements OnInit {
       description: 'All-inclusive Umrah planning',
       color: 'rgba(var(--primary-rgb), 0.1)',
       route: '/packages',
+      // keys for translation
+      // titleKey/descriptionKey are optional; fallback to title/description
+      // when backend provides raw strings.
+      // Using keys here ensures these UI items are translated.
+      // Keys: home.actions.0.title, home.actions.0.desc etc.
+      // See I18nService for translations.
     },
     {
       icon: 'building-2',
@@ -167,8 +194,10 @@ export class HomeComponent implements OnInit {
     {
       icon: 'search',
       step: '01',
+      // keys: home.steps.0.title / home.steps.0.description
       title: 'Choose Package/Services',
-      description: 'Browse our curated packages or build your own custom journey'
+      description: 'Browse our curated packages or build your own custom journey',
+      // keep keys optional for translation
     },
     {
       icon: 'settings',
@@ -192,79 +221,61 @@ export class HomeComponent implements OnInit {
 
   // Statistics Data
   readonly stats: Statistic[] = [
-    { icon: 'users', value: 50000, suffix: '+', label: 'Total Bookings' },
-    { icon: 'trending-up', value: 98, suffix: '%', label: 'Satisfaction Rate' },
-    { icon: 'headphones', value: 24, suffix: '/7', label: 'Support Available' },
-    { icon: 'map-pin', value: 200, suffix: '+', label: 'Destinations' }
+    { icon: 'users', value: 50000, suffix: '+', label: 'stats.totalBookings' },
+    { icon: 'trending-up', value: 98, suffix: '%', label: 'stats.satisfactionRate' },
+    { icon: 'headphones', value: 24, suffix: '/7', label: 'stats.supportAvailable' },
+    { icon: 'map-pin', value: 200, suffix: '+', label: 'stats.destinations' }
   ];
 
-  // Testimonials Data
+  // Testimonials Data — use translation keys for the message body so it can be
+  // translated via I18nService. Names and avatars remain as-is (user data).
   readonly testimonials: Testimonial[] = [
     {
       id: 1,
       name: 'Ahmed Hassan',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmed ',
       rating: 5,
-      text: 'Manisik made my Umrah journey incredibly smooth. From booking to arrival, everything was perfectly organized. The hotel was close to Haram and the support team was always available. Highly recommended!',
-      verified: true
+      textKey: 'testimonials.items.0',
+      verified: true,
     },
     {
       id: 2,
       name: 'Fatima Zahra',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Fatima ',
       rating: 5,
-      text: 'As a first-time pilgrim, I was nervous about planning everything. Manisik\'s team guided me through every step. The package was affordable and the experience was life-changing. JazakAllah Khair!',
-      verified: true
+      textKey: 'testimonials.items.1',
+      verified: true,
     },
     {
       id: 3,
       name: 'Mohammad Ali',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mohammad ',
       rating: 5,
-      text: 'Best Umrah booking platform! The website is easy to use, prices are transparent, and customer service is exceptional. I\'ve booked my third trip with them and will continue to do so.',
-      verified: true
-    }
+      textKey: 'testimonials.items.2',
+      verified: true,
+    },
   ];
 
-  // FAQ Data
+  // FAQ Data — use translation keys so FAQs are localized. If you later fetch
+  // FAQs from the backend, keep the `question`/`answer` fields and omit keys.
   readonly faqs: FAQ[] = [
-    {
-      question: 'How do I book an Umrah package?',
-      answer: 'Booking is simple! Browse our packages, select your preferred dates and accommodations, fill in your details, and complete the secure payment. You\'ll receive instant confirmation via email.'
-    },
-    {
-      question: 'What is included in the Umrah packages?',
-      answer: 'Our packages typically include accommodation, visa processing assistance, transport between cities, and 24/7 customer support. Specific inclusions vary by package tier (Economy, Standard, Premium, VIP).'
-    },
-    {
-      question: 'Can I customize my package?',
-      answer: 'Yes! You can build a custom package by selecting individual services like hotels, flights, and transport. Our team can also help you create a personalized itinerary.'
-    },
-    {
-      question: 'What is your cancellation policy?',
-      answer: 'Cancellation policies vary by package and service provider. Generally, we offer free cancellation up to 30 days before departure. Please check specific terms during booking.'
-    },
-    {
-      question: 'Do you assist with visa applications?',
-      answer: 'Yes, we provide comprehensive visa assistance including document verification, application submission, and follow-up. Visa fees are typically included in our packages.'
-    },
-    {
-      question: 'Is travel insurance included?',
-      answer: 'Travel insurance is optional and can be added during booking. We highly recommend it for your peace of mind and protection during your journey.'
-    },
-    {
-      question: 'How close are the hotels to Masjid al-Haram?',
-      answer: 'We partner with hotels at various distances from the Haram. You can filter by distance during booking. Most of our hotels are within walking distance (100m-2km).'
-    },
-    {
-      question: 'What payment methods do you accept?',
-      answer: 'We accept all major credit cards (Visa, Mastercard, Amex), PayPal, bank transfers, and offer flexible installment plans for qualifying bookings.'
-    }
+    { questionKey: 'faq.items.0.question', answerKey: 'faq.items.0.answer' },
+    { questionKey: 'faq.items.1.question', answerKey: 'faq.items.1.answer' },
+    { questionKey: 'faq.items.2.question', answerKey: 'faq.items.2.answer' },
+    { questionKey: 'faq.items.3.question', answerKey: 'faq.items.3.answer' },
+    { questionKey: 'faq.items.4.question', answerKey: 'faq.items.4.answer' },
+    { questionKey: 'faq.items.5.question', answerKey: 'faq.items.5.answer' },
+    { questionKey: 'faq.items.6.question', answerKey: 'faq.items.6.answer' },
+    { questionKey: 'faq.items.7.question', answerKey: 'faq.items.7.answer' },
   ];
 
   ngOnInit(): void {
     // Trigger hero animation on load
     setTimeout(() => this.animateIn.set(true), 100);
+  }
+
+  ngOnDestroy(): void {
+    // Nothing to clean up in HomeComponent related to hero slider anymore.
   }
 
   /**
@@ -277,14 +288,17 @@ export class HomeComponent implements OnInit {
   /**
    * Toggle FAQ item open/close state
    */
-  toggleFAQ(question: string): void {
+  toggleFAQ(question?: string): void {
+    // If no question/key provided (e.g., backend didn't provide keys), do nothing
+    if (!question) return;
     this.openFAQ.update((current) => (current === question ? null : question));
   }
 
   /**
    * Check if FAQ is open
    */
-  isFAQOpen(question: string): boolean {
+  isFAQOpen(question?: string): boolean {
+    if (!question) return false;
     return this.openFAQ() === question;
   }
 
@@ -361,5 +375,20 @@ export class HomeComponent implements OnInit {
    */
   getStarArray(count: number): number[] {
     return Array.from({ length: count }, (_, i) => i);
+  }
+
+  /**
+   * Set hero image by querying the static img element with the alt text used in template.
+   * We keep this out of the template to avoid changing any HTML structure as requested.
+   */
+  private setHeroImage(src: string): void {
+    try {
+      const img = document.querySelector('img[alt="Kaaba in Makkah"]') as HTMLImageElement | null;
+      if (img) {
+        img.src = src;
+      }
+    } catch (err) {
+      // ignore errors when DOM isn't available
+    }
   }
 }

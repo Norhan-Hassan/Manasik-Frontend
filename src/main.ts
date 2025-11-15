@@ -2,6 +2,8 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { importProvidersFrom } from '@angular/core';
 import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
+import { withInterceptors } from '@angular/common/http';
+import { loadingInterceptor } from './app/core/interceptors/loading.interceptor';
 import {
   LucideAngularModule,
   Globe,
@@ -18,11 +20,14 @@ import {
   Star,
   Clock,
   MapPin,
+  Calendar,
   Check,
   CheckCircle,
   Mail,
   Shield,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Package,
   Bus,
   Settings,
@@ -60,14 +65,19 @@ bootstrapApplication(AppComponent, {
         Mail,
         Shield,
         ChevronDown,
-        Package,
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  Package,
         Bus,
         Settings,
         CreditCard,
         TrendingUp,
       }),
     ),
-    provideHttpClient(),
+    provideHttpClient(
+      withInterceptors([loadingInterceptor])
+    ),
   ]
 })
   .catch((err) => console.error(err));

@@ -1,73 +1,11 @@
 <!-- Navbar -->
 
-<!-- Hero Section -->
-<div class="relative min-h-[600px] lg:min-h-[700px] flex items-center overflow-hidden">
-  <!-- Background Image -->
-  <div class="absolute inset-0">
-    <img
-      src="https://images.unsplash.com/photo-1571909552531-1601eaec8f79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrYWFiYSUyMG1lY2NhJTIwaG9seXxlbnwxfHx8fDE3NjIwMDAzMzd8MA&ixlib=rb-4.1.0&q=80&w=1080 "
-      alt="Kaaba in Makkah"
-      class="w-full h-full object-cover"
-    />
-    <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"></div>
-  </div>
+<!-- Hero slider moved into a standalone component. -->
+<app-hero-slider></app-hero-slider>
 
-  <!-- Content -->
-  <div class="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
-    <div class="max-w-3xl">
-      <h1 class="text-white mb-6 animate-fade-in">
-        Your Journey to the Holy Land Begins Here
-      </h1>
-      <p class="text-white/90 text-xl mb-8">
-        Book Umrah packages, hotels, and transport - all in one place
-      </p>
-
-      <!-- Trust Indicators -->
-      <div class="flex flex-wrap gap-6 mb-8">
-        <div class="flex items-center gap-2 text-white">
-          <lucide-icon name="users" class="h-5 w-5 text-[var(--primary)]"></lucide-icon>
-          <span>10,000+ Happy Pilgrims</span>
-        </div>
-        <div class="flex items-center gap-2 text-white">
-          <lucide-icon name="building-2" class="h-5 w-5 text-[var(--primary)]"></lucide-icon>
-          <span>500+ Partner Hotels</span>
-        </div>
-        <div class="flex items-center gap-2 text-white">
-          <lucide-icon name="headphones" class="h-5 w-5 text-[var(--primary)]"></lucide-icon>
-          <span>24/7 Support</span>
-        </div>
-      </div>
-
-      <!-- Search Bar -->
-      <form
-        (ngSubmit)="onSearchSubmit()"
-        class="bg-white rounded-xl p-2 shadow-2xl flex flex-col sm:flex-row gap-2"
-      >
-        <div class="flex-1 relative">
-          <lucide-icon
-            name="search"
-            class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
-            aria-hidden="true"
-          ></lucide-icon>
-          <input
-            type="search"
-            [value]="searchQuery()"
-            (input)="searchQuery.set($any($event.target).value)"
-            placeholder="Search hotels, transport, or packages"
-            class="pl-13 border-0 focus-visible:ring-0 bg-transparent h-12 w-full outline-none"
-            aria-label="Search for hotels, transport, or packages"
-          />
-        </div>
-        <button
-          type="submit"
-          class="bg-[var(--primary)] text-white hover:opacity-90 h-12 px-8 rounded-[var(--radius-button)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
-        >
-          Start Planning
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
+<!-- AI chat widget (floating) included on the home page. This is a standalone component
+     and is positioned via its own CSS to appear fixed at the right-bottom of the screen. -->
+<app-ai-chat></app-ai-chat>
 
 <!-- Quick Actions Section -->
 <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -100,9 +38,9 @@
 <!-- Featured Packages Section -->
 <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-[var(--surface)]">
   <div class="text-center mb-12">
-    <h2 class="text-[var(--text-primary)] mb-4">Trending Umrah Packages</h2>
+    <h2 class="text-[var(--text-primary)] mb-4">{{ i18n.translate('home.trending') }}</h2>
     <p class="text-[var(--text-secondary)] text-lg">
-      Choose from our carefully curated packages designed for every budget
+      {{ i18n.translate('home.trendingDesc') }}
     </p>
   </div>
 
@@ -175,9 +113,9 @@
               type="button"
               (click)="onViewPackageDetails(pkg.id)"
               class="bg-[var(--primary)] text-white hover:opacity-90 px-4 py-2 rounded text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
-              [attr.aria-label]="'View details for ' + pkg.title"
+              [attr.aria-label]="i18n.translate('aria.viewDetailsFor') + ' ' + pkg.title"
             >
-              View Details
+              {{ i18n.translate('common.viewDetails') }}
             </button>
           </div>
         </div>
@@ -192,7 +130,7 @@
       class="border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white px-6 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
       style="border-radius: var(--radius-button)"
     >
-      View All Packages
+      {{ i18n.translate('home.viewAllPackages') }}
     </button>
   </div>
 </section>
@@ -200,9 +138,9 @@
 <!-- How It Works Section -->
 <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
   <div class="text-center mb-16">
-    <h2 class="text-[var(--text-primary)] mb-4">How It Works</h2>
+    <h2 class="text-[var(--text-primary)] mb-4">{{ i18n.translate('home.howItWorks') }}</h2>
     <p class="text-[var(--text-secondary)] text-lg">
-      Book your spiritual journey in 4 simple steps
+      {{ i18n.translate('home.howItWorksDesc') }}
     </p>
   </div>
 
@@ -223,8 +161,8 @@
             </div>
           </div>
 
-          <h4 class="text-[var(--text-primary)] mb-3">{{ step.title }}</h4>
-          <p class="text-[var(--text-secondary)]">{{ step.description }}</p>
+          <h4 class="text-[var(--text-primary)] mb-3">{{ step.titleKey ? i18n.translate(step.titleKey) : step.title }}</h4>
+          <p class="text-[var(--text-secondary)]">{{ step.descriptionKey ? i18n.translate(step.descriptionKey) : step.description }}</p>
         </div>
       }
     </div>
@@ -245,7 +183,7 @@
           <div class="text-4xl text-white mb-2">
 <!--             <app-animated-counter [target]="stat.value" [suffix]="stat.suffix"></app-animated-counter>
  -->          </div>
-          <div class="text-white/80">{{ stat.label }}</div>
+          <div class="text-white/80">{{ i18n.translate(stat.label) }}</div>
         </div>
       }
     </div>
@@ -255,9 +193,9 @@
 <!-- Testimonials Section -->
 <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-[var(--surface)]">
   <div class="text-center mb-12">
-    <h2 class="text-[var(--text-primary)] mb-4">What Our Pilgrims Say</h2>
+    <h2 class="text-[var(--text-primary)] mb-4">{{ i18n.translate('testimonials.title') }}</h2>
     <p class="text-[var(--text-secondary)] text-lg">
-      Real experiences from verified travelers
+      {{ i18n.translate('testimonials.desc') }}
     </p>
   </div>
 
@@ -290,7 +228,7 @@
             </div>
           </div>
         </div>
-        <p class="text-[var(--text-secondary)] italic">"{{ testimonial.text }}"</p>
+  <p class="text-[var(--text-secondary)] italic">"{{ testimonial.textKey ? i18n.translate(testimonial.textKey) : testimonial.text }}"</p>
       </div>
     }
   </div>
@@ -301,9 +239,9 @@
   <div class="bg-gradient-to-r from-[var(--primary)] to-[#0a5c2d] rounded-2xl p-8 md:p-12 text-center">
     <div class="max-w-2xl mx-auto">
       <lucide-icon name="mail" class="h-12 w-12 text-white mx-auto mb-4"></lucide-icon>
-      <h3 class="text-white mb-4">Get Exclusive Umrah Travel Tips & Deals</h3>
+      <h3 class="text-white mb-4">{{ i18n.translate('home.newsletterTitle') }}</h3>
       <p class="text-white/90 mb-8">
-        Subscribe to our newsletter and be the first to know about special offers, travel guides, and updates.
+        {{ i18n.translate('home.newsletterDesc') }}
       </p>
 
       <form
@@ -325,16 +263,16 @@
           class="bg-[var(--background)] text-[var(--primary)] hover:bg-white h-12 px-8 rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--primary)] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           @if (isSubmittingNewsletter()) {
-            <span>Subscribing...</span>
+            <span>{{ i18n.translate('home.subscribing') }}</span>
           } @else {
-            <span>Subscribe</span>
+            <span>{{ i18n.translate('home.subscribe') }}</span>
           }
         </button>
       </form>
 
       <div class="flex items-center justify-center gap-2 text-white/80">
         <lucide-icon name="shield" class="h-4 w-4"></lucide-icon>
-        <span>Your privacy is protected. Unsubscribe anytime.</span>
+        <span>{{ i18n.translate('home.newsletterPrivacy') }}</span>
       </div>
     </div>
   </div>
@@ -343,38 +281,41 @@
 <!-- FAQ Section -->
 <section class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-[var(--surface)]">
   <div class="text-center mb-12">
-    <h2 class="text-[var(--text-primary)] mb-4">Frequently Asked Questions</h2>
+    <h2 class="text-[var(--text-primary)] mb-4">{{ i18n.translate('faq.title') }}</h2>
     <p class="text-[var(--text-secondary)] text-lg">
-      Find answers to common questions about booking your Umrah journey
+      {{ i18n.translate('faq.desc') }}
     </p>
   </div>
 
   <div class="max-w-3xl mx-auto space-y-4">
-    @for (faq of faqs; track faq.question) {
+    @for (faq of faqs; track faq.questionKey || faq.question) {
       <div class="border border-[var(--border)] bg-[var(--background)] rounded-lg overflow-hidden">
         <button
           type="button"
-          class="w-full px-6 py-4 text-left flex justify-between items-center text-[var(--text-primary)] hover:text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
-          (click)="toggleFAQ(faq.question)"
-          [attr.aria-expanded]="isFAQOpen(faq.question)"
+          class="w-full px-6 py-4 text-left flex items-center gap-4 text-[var(--text-primary)] hover:text-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
+          (click)="toggleFAQ(faq.questionKey || faq.question)"
+          [attr.aria-expanded]="isFAQOpen(faq.questionKey || faq.question)"
           [attr.aria-controls]="'faq-answer-' + $index"
         >
-          <span class="font-medium">{{ faq.question }}</span>
-          <lucide-icon
-            name="chevron-down"
-            class="h-5 w-5 transition-transform flex-shrink-0 ml-2"
-            [ngClass]="{ 'rotate-180': isFAQOpen(faq.question) }"
-            aria-hidden="true"
-          ></lucide-icon>
+          <span class="font-medium flex-1">{{ faq.questionKey ? i18n.translate(faq.questionKey) : faq.question }}</span>
+          <!-- Fixed-size icon container so rotating the chevron doesn't change layout width -->
+          <span class="w-6 h-6 flex items-center justify-center flex-none faq-toggle-icon">
+            <lucide-icon
+              name="chevron-down"
+              class="h-5 w-5 transition-transform origin-center"
+              [ngClass]="{ 'rotate-180': isFAQOpen(faq.questionKey || faq.question) }"
+              aria-hidden="true"
+            ></lucide-icon>
+          </span>
         </button>
-        @if (isFAQOpen(faq.question)) {
+        @if (isFAQOpen(faq.questionKey || faq.question)) {
           <div
             [id]="'faq-answer-' + $index"
             class="px-6 py-4 text-[var(--text-secondary)]"
             role="region"
             [attr.aria-labelledby]="'faq-question-' + $index"
           >
-            {{ faq.answer }}
+            {{ faq.answerKey ? i18n.translate(faq.answerKey) : faq.answer }}
           </div>
         }
       </div>

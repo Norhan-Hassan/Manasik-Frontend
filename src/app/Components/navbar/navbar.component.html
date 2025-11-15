@@ -14,7 +14,8 @@
         <div class="bg-[var(--primary)] text-white px-3 py-2 rounded-lg">
           <span class="font-bold text-xl" aria-hidden="true">🕋</span>
         </div>
-        <span class="font-bold text-xl text-[var(--text-primary)]">Manisik</span>
+        <!-- Use the short app name translation key for tight spaces like the header/logo -->
+        <span class="font-bold text-xl text-[var(--text-primary)]">{{ i18n.translate('app.shortName') }}</span>
       </a>
 
       <!-- Desktop Navigation Links -->
@@ -28,7 +29,7 @@
             class="transition-colors text-[var(--text-primary)] hover:text-[var(--primary)] font-medium focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2 rounded px-2 py-1"
             [attr.aria-current]="link.path === '/' ? 'page' : null"
           >
-            {{ link.label }}
+            {{ i18n.translate(link.key) }}
           </a>
         }
       </div>
@@ -36,7 +37,7 @@
       <!-- Action Icons -->
       <div class="flex items-center gap-3">
         @for (icon of navIcons; track icon.name) {
-          @if (icon.name !== 'menu') {
+            @if (icon.name !== 'menu') {
             <button
               type="button"
               class="nav-icon-btn relative hidden md:flex"
@@ -45,6 +46,13 @@
               [attr.aria-pressed]="icon.name === 'moon' ? 'false' : null"
             >
               <lucide-icon [name]="icon.name" class="h-5 w-5" aria-hidden="true"></lucide-icon>
+                <!--
+                  The globe icon toggles application language and direction (LTR/RTL).
+                  Implementation detail: clicking it calls `handleLanguageChange()` in
+                  `NavbarComponent` which only updates `document.documentElement.dir` and
+                  `document.documentElement.lang`. We intentionally don't alter component
+                  templates — only the top-level `dir` so the whole app flips.
+                -->
               @if (icon.showBadge && hasCartItems()) {
                 <span
                   class="absolute -top-1 -right-1 bg-[var(--error)] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-semibold"
@@ -72,19 +80,17 @@
           ></lucide-icon>
         </button>
 
-        <!-- Sign In / Login Buttons -->
-        <a
-          routerLink="/signIn"
-          class="btn-primary hidden lg:flex focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
-        >
-          Sign In
-        </a>
-        <a
-          routerLink="/login"
-          class="btn-outline hidden lg:flex focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
-        >
-          Login
-        </a>
+        <!-- Auth buttons grouped and consistent across breakpoints -->
+        <div class="ml-3 hidden md:flex items-center gap-2">
+          <!-- Sign In -> /login, Sign Up -> /signIn (keep existing routes but consistent labels)
+               We use routerLinkActive so the active route reflects the primary color background. -->
+          <a routerLink="/login" routerLinkActive="bg-[var(--primary)] text-white" class="btn-primary px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2">
+            {{ i18n.translate('auth.signIn') }}
+          </a>
+          <a routerLink="/signIn" routerLinkActive="bg-[var(--primary)] text-white" class="btn-outline px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2">
+            {{ i18n.translate('auth.signUp') }}
+          </a>
+        </div>
       </div>
     </div>
 
@@ -105,13 +111,13 @@
               class="block px-4 py-3 rounded-lg text-[var(--text-primary)] hover:text-[var(--primary)] hover:bg-[var(--surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
               role="menuitem"
             >
-              {{ link.label }}
+              {{ i18n.translate(link.key) }}
             </a>
           }
         </div>
 
-        <!-- Mobile Action Icons -->
-        <div class="px-4 py-4 border-t border-[var(--border)] flex items-center justify-around">
+  <!-- Mobile Action Icons -->
+  <div class="px-4 py-4 border-t border-[var(--border)] flex items-center justify-start gap-4">
           @for (icon of navIcons; track icon.name) {
             @if (icon.name !== 'menu') {
               <button
@@ -134,21 +140,21 @@
           }
         </div>
 
-        <!-- Mobile Auth Buttons -->
+        <!-- Mobile Auth Buttons (use same labels as desktop and translate) -->
         <div class="px-4 py-4 border-t border-[var(--border)] space-y-2">
-          <a
-            routerLink="/signIn"
-            (click)="closeMobileMenu()"
-            class="btn-primary w-full text-center block focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
-          >
-            Sign In
-          </a>
           <a
             routerLink="/login"
             (click)="closeMobileMenu()"
+            class="btn-primary w-full text-center block focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
+          >
+            {{ i18n.translate('auth.signIn') }}
+          </a>
+          <a
+            routerLink="/signIn"
+            (click)="closeMobileMenu()"
             class="btn-outline w-full text-center block focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-offset-2"
           >
-            Login
+            {{ i18n.translate('auth.signUp') }}
           </a>
         </div>
       </div>

@@ -1,8 +1,20 @@
 <div class="w-full px-3">
-<app-navbar></app-navbar>
-<main class="content pt-16 lg:pt-20">
-  <router-outlet></router-outlet>  <!-- dynamic content goes here -->
-</main>
-<app-footer></app-footer>
-</div>
+  <app-navbar></app-navbar>
 
+  <!-- Global dashboard overlay component. It is always present but shows only when DashboardService.open is true. -->
+  <app-dashboard></app-dashboard>
+
+  <!-- Loading Spinner -->
+  <!-- Loading Spinner Overlay -->
+  <div
+    *ngIf="LoadingService.loading$ | async"
+    class="fixed inset-0 bg-white/60 dark:bg-black/40 flex items-center justify-center z-50">
+    <div class="w-16 h-16 border-6 border-gray-300 border-t-[var(--primary)] rounded-full animate-spin"></div>
+  </div>
+
+  <main class="content pt-16 lg:pt-20">
+    <router-outlet></router-outlet>  <!-- dynamic content goes here -->
+  </main>
+
+  <app-footer></app-footer>
+</div>

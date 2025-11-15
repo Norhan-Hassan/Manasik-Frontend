@@ -1,0 +1,4 @@
+/* Hotel details styles: keep consistent with global theme variables */
+:host { display:block }
+
+img { border-radius: 8px }

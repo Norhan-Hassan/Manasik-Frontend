@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { LoginService } from 'src/app/core/services/login.service';
 
 @Component({
@@ -14,7 +15,7 @@ loginForm!: FormGroup;
   errorMessage: string = '';
   showPassword: boolean = false;
 
-  constructor(private fb: FormBuilder, private loginService: LoginService, private router: Router) {
+  constructor(private fb: FormBuilder, private loginService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email, Validators.pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.com$/)]],
       password: ['', [Validators.required, Validators.minLength(6)]]

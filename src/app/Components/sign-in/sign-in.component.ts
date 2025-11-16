@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 import { RegistrationService } from 'src/app/core/services/registration.service';
 import { RegisterRequest, UserRole } from 'src/app/interfaces/user.interface';
 
@@ -18,7 +19,7 @@ export class SignInComponent {
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
 
-  constructor(private fb: FormBuilder, private registerService: RegistrationService, private router: Router) {
+  constructor(private fb: FormBuilder, private registerService: AuthService, private router: Router) {
 
     this.registrationForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[\u0621-\u064AA-Za-z\s]+$/)]],
@@ -58,10 +59,10 @@ export class SignInComponent {
     this.registerService.register(registerData).subscribe({
       next: (response) => {
         this.isLoading = false;
-        if (response.success) {
+        if (response.user) {
           this.router.navigate(['/login']);
         } else {
-          this.errorMessage = response.message || 'Registration failed. Please try again.';
+          this.errorMessage = 'Registration failed. Please try again.';
         }
       },
       error: (error) => {

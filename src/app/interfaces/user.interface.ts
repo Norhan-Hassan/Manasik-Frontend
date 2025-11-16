@@ -23,8 +23,8 @@ export interface LoginRequest {
 export interface RegisterRequest {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  firstNam?: string;
+  lastName?: string;
   phone?: string;
   role?: UserRole;
 }
@@ -35,3 +35,9 @@ export interface AuthResponse {
   refreshToken?: string;
 }
 
+export interface RegisterResponse {
+    success: boolean;
+    message: string;
+    roles?: UserRole;
+    token?: string;
+}

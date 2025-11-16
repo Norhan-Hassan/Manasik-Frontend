@@ -6,10 +6,11 @@ import { FooterComponent } from './Components/footer/footer.component';
 import { DashboardComponent } from './Components/dashboard/dashboard.component';
 import { LoadingService } from './core/services/loading.service';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
-  imports: [MatListModule, RouterOutlet, NavbarComponent, FooterComponent, DashboardComponent, CommonModule],
+  imports: [MatListModule, RouterOutlet, FormsModule, NavbarComponent, FooterComponent, DashboardComponent, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

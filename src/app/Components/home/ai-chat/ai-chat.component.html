@@ -7,12 +7,12 @@
   <button
     aria-label="Open AI chat"
     (click)="openChat()"
-    class="w-15 h-12 rounded-full bg-[var(--primary)] text-white flex items-center justify-center shadow-lg"
+    class="w-12 h-12 rounded-full bg-[var(--primary)] text-white flex items-center justify-center shadow-lg"
   >
     🤖
   </button>
 </div>
-
+  
 <!-- Full chat panel when open -->
 <div
   *ngIf="open()"
@@ -69,8 +69,8 @@
         <div
           class="inline-block bg-[var(--surface)] text-[var(--text-primary)] px-3 py-2 rounded-lg max-w-[75%]"
         >
-          <div class="text-xs font-semibold">{{ msg.name }}</div>
-          <div class="mt-1">{{ msg.text }}</div>
+          <div class="text-xs font-semibold mb-1">{{ msg.name }}</div>
+          <div class="markdown-content text-sm leading-relaxed" [innerHTML]="msg.text | markdown"></div>
         </div>
       </div>
     </div>

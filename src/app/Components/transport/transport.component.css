@@ -127,6 +127,12 @@
   border-color: #1e7e34;
 }
 
+/* Fix Date Picker Icon in Dark Mode */
+.dark .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
 .search-button {
   padding: 12px 32px;
   background: #1e7e34;

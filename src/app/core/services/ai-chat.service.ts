@@ -5,10 +5,12 @@ import { environment } from '../../../environments/environment';
 
 
 export interface AIChatResponse {
-  message: string;
-  sessionId: string;
-  suggestedActions: string[];
-  data: {
+  answer: string;
+  // Optional fields if the backend returns them in future or other endpoints
+  sessionId?: string;
+  message?: string; 
+  suggestedActions?: string[];
+  data?: {
     intent: string;
     hotels: any | null;
     transports: any | null;
@@ -29,29 +31,32 @@ export class AIChatService {
   private http = inject(HttpClient);
   private readonly base = environment.apiUrl;
 
-  sendMessage(sessionId: string | null, message: string): Observable<{ conversationId: string; reply: string }> {
-  if (!sessionId) sessionId = crypto.randomUUID();
+  /**
+   * Sends a message to the AI Chatbot.
+   * Payload: { sessionId, message }
+   * Response: { answer: string }
+   */
+  sendMessage(sessionId: string | null, message: string): Observable<{ conversationId: string; answer: string }> {
+    // Generate a new session ID if one doesn't exist
+    if (!sessionId) sessionId = crypto.randomUUID();
 
-  return this.http
-    .post<AIChatResponse>(`${this.base}/AI/chat`, {
-      sessionId,
-      role: "user",
-      message,
-      language: "en",
-      timestamp: new Date().toISOString(),
-    })
-    .pipe(
-      map((res) => ({
-        conversationId: res.sessionId, // use sessionId from response
-        reply: res.message,            // message from backend
-      }))
-    );
-}
+    return this.http
+      .post<AIChatResponse>(`${this.base}/ChatBotAi/chat`, {
+        sessionId,
+        message,
+      })
+      .pipe(
+        map((res) => ({
+          conversationId: sessionId!, // Return the same session ID as backend might not return it in the body based on the curl example
+          answer: res.answer,         // Map 'answer' from response
+        }))
+      );
+  }
 
 
   clearSession(sessionId: string) {
     return this.http.post(
-      `${this.base}/AI/clear?sessionId=${sessionId}`,
+      `${this.base}/ChatBotAi/clear?sessionId=${sessionId}`,
       {}
     );
   }

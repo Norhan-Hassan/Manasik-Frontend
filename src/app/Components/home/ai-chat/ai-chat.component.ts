@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { AIChatService } from 'src/app/core/services/ai-chat.service';
 import { I18nService } from 'src/app/core/services/i18n.service';
+import { MarkdownPipe } from 'src/app/shared/pipes/markdown.pipe';
 
 /**
  * AIChatComponent
@@ -22,7 +23,7 @@ import { I18nService } from 'src/app/core/services/i18n.service';
 @Component({
   selector: 'app-ai-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, MarkdownPipe],
   templateUrl: './ai-chat.component.html',
   styleUrls: ['./ai-chat.component.css'],
 })
@@ -79,11 +80,17 @@ export class AIChatComponent implements OnInit {
 
     this.ai.sendMessage(this.conversationId, text).subscribe({
       next: (res) => {
-        if (res?.conversationId) this.conversationId = res.conversationId;
-        this.addMessage('assistant', res?.reply ?? 'Sorry, I could not generate a response.', 'Assistant');
+        console.log('AI response', res);
+        // Update conversation ID if it was null (first message)
+        if (!this.conversationId) this.conversationId = res.conversationId;
+        
+        this.addMessage('assistant', res.answer ?? 'Sorry, I could not generate a response.', 'Assistant');
         this.loading.set(false);
       },
-      error: this.handleError.bind(this),
+      error: (err) => {
+        // Global error interceptor will handle the toast, we just stop loading
+        this.handleError(err);
+      },
     });
   }
 

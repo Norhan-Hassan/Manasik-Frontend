@@ -52,19 +52,6 @@
   }
 
   /* Remove global transition - this was causing the delay */
-  * {
-    @apply border-[color:var(--border)];
-  }
- 
-  body {
-    @apply bg-[var(--background)] text-[var(--text-primary)];
-    font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI",
-      sans-serif;
-    /* Add transition only to body for smooth theme changes */
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  }
-
-  /* Typography System */
   h1 {
     font-size: 48px;
     line-height: 56px;

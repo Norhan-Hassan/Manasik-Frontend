@@ -55,6 +55,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { routes } from './app/app.routes'; // define your routes in a separate file
 
+import { errorInterceptor } from './app/core/interceptors/error.interceptor';
+
 bootstrapApplication(AppComponent, {
   ...appConfig,
   providers: [
@@ -113,7 +115,7 @@ bootstrapApplication(AppComponent, {
       })
     ),
     provideHttpClient(
-      withInterceptors([loadingInterceptor, authInterceptorInterceptor])
+      withInterceptors([loadingInterceptor, authInterceptorInterceptor, errorInterceptor])
     ),
   ],
 }).catch((err) => console.error(err));

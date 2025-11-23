@@ -1,4 +1,11 @@
-import { Component, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  signal,
+  computed,
+  inject,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { I18nService } from 'src/app/core/services/i18n.service';
@@ -9,7 +16,6 @@ import { User } from 'src/app/interfaces';
 import { LucideAngularModule } from 'lucide-angular';
 import { NgZone } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-
 
 export interface NavLink {
   key: string;
@@ -38,7 +44,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private readonly ngZone = inject(NgZone);
   private readonly toastr = inject(ToastrService);
 
-
   // Signals
   readonly UserStatus = signal<boolean>(false);
   readonly isUserDropdownOpen = signal<boolean>(false);
@@ -61,22 +66,43 @@ export class NavbarComponent implements OnInit, OnDestroy {
     { key: 'nav.home', path: '/', icon: 'home' },
     { key: 'nav.packages', path: '/packages', icon: 'package' },
     { key: 'nav.hotels', path: '/hotels', icon: 'building-2' },
-    { key: 'nav.bookingHotel', path: '/booking-hotel', icon: 'calendar-check' },
+    //{ key: 'nav.bookingHotel', path: '/booking-hotel', icon: 'calendar-check' },
     { key: 'nav.transport', path: '/transport', icon: 'bus' },
   ];
 
   readonly navIcons: NavIcon[] = [
     { name: 'search', ariaLabel: 'Search', action: () => this.handleSearch() },
-    { name: 'globe', ariaLabel: 'Change Language', action: () => this.handleLanguageChange() },
-    { name: 'moon', ariaLabel: 'Toggle Dark Mode', action: () => this.handleThemeToggle() },
-    { name: 'shopping-cart', ariaLabel: 'View Shopping Cart', action: () => this.handleCartClick(), showBadge: true },
-    { name: 'user', ariaLabel: 'User Account', action: () => this.handleUserClick() },
-    { name: 'menu', ariaLabel: 'Toggle Mobile Menu', action: () => this.toggleMobileMenu() },
+    {
+      name: 'globe',
+      ariaLabel: 'Change Language',
+      action: () => this.handleLanguageChange(),
+    },
+    {
+      name: 'moon',
+      ariaLabel: 'Toggle Dark Mode',
+      action: () => this.handleThemeToggle(),
+    },
+    {
+      name: 'shopping-cart',
+      ariaLabel: 'View Shopping Cart',
+      action: () => this.handleCartClick(),
+      showBadge: true,
+    },
+    {
+      name: 'user',
+      ariaLabel: 'User Account',
+      action: () => this.handleUserClick(),
+    },
+    {
+      name: 'menu',
+      ariaLabel: 'Toggle Mobile Menu',
+      action: () => this.toggleMobileMenu(),
+    },
   ];
 
   ngOnInit(): void {
     // Subscribe to auth service for reactive user updates
-    this.authSubscription = this.authService.currentUser$.subscribe(user => {
+    this.authSubscription = this.authService.currentUser$.subscribe((user) => {
       this.currentUser.set(user);
       this.UserStatus.set(!!user);
     });
@@ -96,7 +122,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   toggleMobileMenu(): void {
-    this.isMobileMenuOpen.update(v => !v);
+    this.isMobileMenuOpen.update((v) => !v);
   }
 
   logOut(): void {
@@ -128,7 +154,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   public handleSearch(): void {
-    this.router.navigate(['/search']).catch(err => console.error('Navigation error:', err));
+    this.router
+      .navigate(['/search'])
+      .catch((err) => console.error('Navigation error:', err));
   }
 
   public handleLanguageChange(): void {
@@ -148,7 +176,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public handleThemeToggle(): void {
     const next = !this.isDarkMode();
     this.isDarkMode.set(next);
-    try { localStorage.setItem('app_dark', next ? '1' : '0'); } catch {}
+    try {
+      localStorage.setItem('app_dark', next ? '1' : '0');
+    } catch {}
     this.applyThemeState(next);
   }
 
@@ -158,12 +188,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   public handleCartClick(): void {
-    this.router.navigate(['/cart']).catch(err => console.error('Navigation error:', err));
+    this.router
+      .navigate(['/cart'])
+      .catch((err) => console.error('Navigation error:', err));
   }
 
   public handleUserClick(): void {
     if (!this.UserStatus()) {
-      this.router.navigate(['/login']).catch(err => console.error(err));
+      this.router.navigate(['/login']).catch((err) => console.error(err));
       return;
     }
     this.openUserModel();
@@ -176,49 +208,50 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public isDarkModeValue(): boolean {
     return this.isDarkMode();
   }
-  
 
-openUserModel(): void {
-  if (!this.UserStatus()) {
-    this.router.navigate(['/login']);
-    return;
+  openUserModel(): void {
+    if (!this.UserStatus()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // Toggle dropdown
+    this.isUserDropdownOpen.update((v) => !v);
+
+    // Fetch user if not loaded
+    if (!this.currentUser() && this.isUserDropdownOpen()) {
+      this.isLoadingUser.set(true);
+
+      this.authService.getCurrentUser().subscribe({
+        next: (user) => {
+          this.ngZone.run(() => {
+            this.currentUser.set(user); // must update the local signal
+            this.authService.updateCurrentUser(user); // optional: keep service in sync
+            this.isLoadingUser.set(false);
+          });
+        },
+        error: (err) => {
+          this.ngZone.run(() => {
+            console.error('Failed to fetch user:', err);
+            this.isLoadingUser.set(false);
+            this.closeUserDropdown();
+          });
+        },
+      });
+    }
   }
-
-  // Toggle dropdown
-  this.isUserDropdownOpen.update(v => !v);
-
-  // Fetch user if not loaded
-  if (!this.currentUser() && this.isUserDropdownOpen()) {
-    this.isLoadingUser.set(true);
-
-    this.authService.getCurrentUser().subscribe({
-      next: (user) => {
-        this.ngZone.run(() => {
-        this.currentUser.set(user); // must update the local signal
-        this.authService.updateCurrentUser(user); // optional: keep service in sync
-        this.isLoadingUser.set(false);
-        });
-      },
-      error: (err) => {
-         this.ngZone.run(() => {
-        console.error('Failed to fetch user:', err);
-        this.isLoadingUser.set(false);
-        this.closeUserDropdown();
-         });
-      }
-    });
-  }
-}
-
-
 
   navigateToDashboard(): void {
     this.closeUserDropdown();
-    this.router.navigate(['/dashboard']).catch(err => console.error('Navigation error:', err));
+    this.router
+      .navigate(['/dashboard'])
+      .catch((err) => console.error('Navigation error:', err));
   }
 
   navigateToProfile(): void {
     this.closeUserDropdown();
-    this.router.navigate(['/profile']).catch(err => console.error('Navigation error:', err));
+    this.router
+      .navigate(['/profile'])
+      .catch((err) => console.error('Navigation error:', err));
   }
 }

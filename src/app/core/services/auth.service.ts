@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   register(data: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/Auth/register`, data).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/Auth/Register`, data).pipe(
       tap(response => {
         this.setAuthData(response.data);
         this.fetchAndSetUser();

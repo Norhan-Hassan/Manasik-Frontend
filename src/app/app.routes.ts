@@ -8,10 +8,13 @@ export const routes: Routes = [
     {path: 'hotels', loadComponent: () => import('./Components/hotel/hotel.component').then(m => m.HotelComponent) ,canActivate: [authGuard]},
     {path: 'booking-hotel', loadComponent: () => import('./Components/booking-hotel/booking-hotel.component').then(m => m.BookingHotelComponent), canActivate: [authGuard]},
     {path: 'transport', loadComponent: () => import('./Components/transport/transport.component').then(m => m.TransportComponent) , canActivate: [authGuard]},
+    {path: 'booking/international',loadComponent: () => import('./Components/booking-international-transport/booking-international-transport.component').then(m => m.BookingInternationalTransportComponent)
+            },
     {path: 'signIn', loadComponent: () => import('./Components/sign-in/sign-in.component').then(m => m.SignInComponent)},
     {path: 'login', loadComponent: () => import('./Components/login/login.component').then(m => m.LoginComponent)},
     {path: 'dashboard', loadComponent: () => import('./Components/dashboard/dashboard.component').then(m => m.DashboardComponent), canActivate: [authGuard]},
-    {path: '**', redirectTo: ''}
 
+    {path: '**', redirectTo: ''}
+     
 
 ];

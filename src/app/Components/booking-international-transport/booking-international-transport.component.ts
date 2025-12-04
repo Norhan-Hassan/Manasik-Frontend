@@ -123,8 +123,14 @@ export class BookingInternationalTransportComponent implements OnInit {
       next: (response) => {
         console.log(response);
         this.bookingService.bookTransport(retBooking).subscribe({
-          next: () => alert('Round-trip booked successfully!'),
-          error: (err) => alert('Return flight booking failed: ' + err.message),
+          //next: () => alert('Round-trip booked successfully!'),
+          next: () => {
+            this.toastr.success(
+              'Round-trip booked successfully!',
+              'Booking Confirmed'
+            );
+          },
+          // error: (err) => alert('Return flight booking failed: ' + err.message),
         });
       },
       error: (err) => {

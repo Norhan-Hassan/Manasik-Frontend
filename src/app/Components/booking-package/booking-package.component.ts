@@ -501,9 +501,19 @@ export class BookingPackageComponent implements OnInit, OnDestroy {
       }
 
       this.isFinalizing = false;
-    } catch (err) {
+    } catch (err: any) {
+      // If the error was already handled/toasted in saveBooking, we might not need to toast again
+      // unless we want to be sure.
+      // But let's assume saveBooking throws the error object.
 
-      this.toastr.error('فشل في حفظ الحجز. الرجاء المحاولة مرة أخرى.', 'خطأ');
+      const msg = err?.error?.message || err?.message || 'فشل في حفظ الحجز. الرجاء المحاولة مرة أخرى.';
+
+      // If saveBooking already toasted, we might be duplicating, but better safe than sorry for now.
+      // Let's rely on the user report.
+      // If the user says "Save Failed", they see 'فشل في حفظ الحجز'.
+
+      console.error('Finalize Booking Error:', err);
+      // this.toastr.error(msg, 'خطأ'); // duplicate if saveBooking defines it
       this.isFinalizing = false;
     }
   }
@@ -606,7 +616,16 @@ export class BookingPackageComponent implements OnInit, OnDestroy {
     } catch (error: any) {
 
 
-      const errorMsg = error?.error?.message || error?.error?.title || 'فشل إنشاء الحجز';
+      let errorMsg = 'فشل إنشاء الحجز';
+      if (typeof error?.error === 'string') {
+        errorMsg = error.error; // Backend returned raw string
+      } else if (error?.error?.message) {
+        errorMsg = error.error.message;
+      } else if (error?.error?.title) {
+        errorMsg = error.error.title;
+      } else if (error?.message) {
+        errorMsg = error.message;
+      }
 
       // Check for specific error about pending/existing booking
       if (errorMsg.toLowerCase().includes('already') || errorMsg.toLowerCase().includes('pending')) {
